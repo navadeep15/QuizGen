@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 // Navigation component
 const Navigation = () => (
@@ -12,14 +12,14 @@ const Navigation = () => (
 )
 
 const Home = () => {
+  const navigate = useNavigate()
+
   const handleLogin = () => {
-    // TODO: Implement login functionality
-    console.log('Login clicked')
+    navigate('/login')
   }
 
   const handleSignUp = () => {
-    // TODO: Implement sign up functionality
-    console.log('Sign up clicked')
+    navigate('/signup')
   }
 
   return (

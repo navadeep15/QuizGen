@@ -8,6 +8,8 @@ import Home from './components/Home'
 import Quiz from './components/Quiz'
 import Results from './components/Results'
 import About from './components/About'
+import Login from './components/Login'
+import SignUp from './components/SignUp'
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/results" element={<Results />} />
           <Route path="/about" element={<About />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
         </Routes>
       </div>
     </Router>

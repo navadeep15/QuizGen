@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -7,7 +8,15 @@ const Login = () => {
     password: ''
   })
   const [errors, setErrors] = useState({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
+  const { login, error, clearError } = useAuth()
+
+  // Clear any existing errors when component mounts
+  useEffect(() => {
+    clearError()
+  }, [clearError])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -47,19 +56,24 @@ const Login = () => {
     e.preventDefault()
     
     if (validateForm()) {
+      setIsSubmitting(true)
+      setErrors({})
+      
       try {
-        // TODO: Implement actual login API call
-        console.log('Login attempt:', formData)
+        const result = await login(formData)
         
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        
-        // For now, just navigate to home page
-        navigate('/')
-        alert('Login successful!')
+        if (result.success) {
+          // Redirect to the page they were trying to access, or home
+          const from = location.state?.from?.pathname || '/'
+          navigate(from, { replace: true })
+        } else {
+          setErrors({ general: result.message || 'Login failed. Please try again.' })
+        }
       } catch (error) {
         console.error('Login error:', error)
-        setErrors({ general: 'Login failed. Please try again.' })
+        setErrors({ general: error.message || 'Login failed. Please try again.' })
+      } finally {
+        setIsSubmitting(false)
       }
     }
   }
@@ -91,7 +105,7 @@ const Login = () => {
         </div>
 
         {/* Error Message */}
-        {errors.general && (
+        {(errors.general || error) && (
           <div style={{
             backgroundColor: '#f8d7da',
             color: '#721c24',
@@ -100,7 +114,7 @@ const Login = () => {
             marginBottom: '1rem',
             textAlign: 'center'
           }}>
-            {errors.general}
+            {errors.general || error}
           </div>
         )}
 
@@ -172,22 +186,32 @@ const Login = () => {
 
           <button
             type="submit"
+            disabled={isSubmitting}
             style={{
               width: '100%',
               padding: '0.75rem',
-              backgroundColor: '#007bff',
+              backgroundColor: isSubmitting ? '#6c757d' : '#007bff',
               color: 'white',
               border: 'none',
               borderRadius: '5px',
               fontSize: '1rem',
               fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'background-color 0.3s ease'
+              cursor: isSubmitting ? 'not-allowed' : 'pointer',
+              transition: 'background-color 0.3s ease',
+              opacity: isSubmitting ? 0.7 : 1
             }}
-            onMouseOver={(e) => e.target.style.backgroundColor = '#0056b3'}
-            onMouseOut={(e) => e.target.style.backgroundColor = '#007bff'}
+            onMouseOver={(e) => {
+              if (!isSubmitting) {
+                e.target.style.backgroundColor = '#0056b3'
+              }
+            }}
+            onMouseOut={(e) => {
+              if (!isSubmitting) {
+                e.target.style.backgroundColor = '#007bff'
+              }
+            }}
           >
-            Sign In
+            {isSubmitting ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
 

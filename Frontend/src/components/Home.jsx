@@ -1,18 +1,27 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 // Navigation component
-const Navigation = () => (
-  <nav style={{ padding: '1rem', backgroundColor: '#f0f0f0', marginBottom: '1rem' }}>
-    <Link to="/" style={{ marginRight: '1rem', textDecoration: 'none', color: '#333' }}>Home</Link>
-    <Link to="/quiz" style={{ marginRight: '1rem', textDecoration: 'none', color: '#333' }}>Quiz</Link>
-    <Link to="/results" style={{ marginRight: '1rem', textDecoration: 'none', color: '#333' }}>Results</Link>
-    <Link to="/about" style={{ textDecoration: 'none', color: '#333' }}>About</Link>
-  </nav>
-)
+const Navigation = () => {
+  const { user, logout } = useAuth()
+  
+  return (
+    <nav style={{ padding: '1rem', backgroundColor: '#f0f0f0', marginBottom: '1rem' }}>
+      <Link to="/" style={{ marginRight: '1rem', textDecoration: 'none', color: '#333' }}>Home</Link>
+      <Link to="/quiz" style={{ marginRight: '1rem', textDecoration: 'none', color: '#333' }}>Quiz</Link>
+      <Link to="/results" style={{ marginRight: '1rem', textDecoration: 'none', color: '#333' }}>Results</Link>
+      <Link to="/about" style={{ marginRight: '1rem', textDecoration: 'none', color: '#333' }}>About</Link>
+      {user && (
+        <Link to="/create-quiz" style={{ marginRight: '1rem', textDecoration: 'none', color: '#333' }}>Create Quiz</Link>
+      )}
+    </nav>
+  )
+}
 
 const Home = () => {
   const navigate = useNavigate()
+  const { user, logout } = useAuth()
 
   const handleLogin = () => {
     navigate('/login')
@@ -24,6 +33,11 @@ const Home = () => {
 
   const handleCreateQuiz = () => {
     navigate('/create-quiz')
+  }
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
   }
 
   return (
@@ -42,55 +56,89 @@ const Home = () => {
         <div>
           <h1 style={{ margin: 0, color: '#333' }}>QuizGen</h1>
         </div>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <button 
-            onClick={handleLogin}
-            style={{
-              padding: '0.5rem 1.5rem',
-              backgroundColor: 'transparent',
-              color: '#007bff',
-              border: '2px solid #007bff',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              fontSize: '1rem',
-              fontWeight: '500',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseOver={(e) => {
-              e.target.style.backgroundColor = '#007bff'
-              e.target.style.color = 'white'
-            }}
-            onMouseOut={(e) => {
-              e.target.style.backgroundColor = 'transparent'
-              e.target.style.color = '#007bff'
-            }}
-          >
-            Login
-          </button>
-          <button 
-            onClick={handleSignUp}
-            style={{
-              padding: '0.5rem 1.5rem',
-              backgroundColor: '#007bff',
-              color: 'white',
-              border: '2px solid #007bff',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              fontSize: '1rem',
-              fontWeight: '500',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseOver={(e) => {
-              e.target.style.backgroundColor = '#0056b3'
-              e.target.style.borderColor = '#0056b3'
-            }}
-            onMouseOut={(e) => {
-              e.target.style.backgroundColor = '#007bff'
-              e.target.style.borderColor = '#007bff'
-            }}
-          >
-            Sign Up
-          </button>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          {user ? (
+            <>
+              <span style={{ color: '#666', fontSize: '0.9rem' }}>
+                Welcome, {user.firstName}!
+              </span>
+              <button 
+                onClick={handleLogout}
+                style={{
+                  padding: '0.5rem 1.5rem',
+                  backgroundColor: '#dc3545',
+                  color: 'white',
+                  border: '2px solid #dc3545',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  fontWeight: '500',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = '#c82333'
+                  e.target.style.borderColor = '#c82333'
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = '#dc3545'
+                  e.target.style.borderColor = '#dc3545'
+                }}
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <button 
+                onClick={handleLogin}
+                style={{
+                  padding: '0.5rem 1.5rem',
+                  backgroundColor: 'transparent',
+                  color: '#007bff',
+                  border: '2px solid #007bff',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  fontWeight: '500',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = '#007bff'
+                  e.target.style.color = 'white'
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = 'transparent'
+                  e.target.style.color = '#007bff'
+                }}
+              >
+                Login
+              </button>
+              <button 
+                onClick={handleSignUp}
+                style={{
+                  padding: '0.5rem 1.5rem',
+                  backgroundColor: '#007bff',
+                  color: 'white',
+                  border: '2px solid #007bff',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  fontWeight: '500',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = '#0056b3'
+                  e.target.style.borderColor = '#0056b3'
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = '#007bff'
+                  e.target.style.borderColor = '#007bff'
+                  }}
+              >
+                Sign Up
+              </button>
+            </>
+          )}
         </div>
       </div>
 

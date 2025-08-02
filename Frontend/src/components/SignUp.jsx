@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -10,7 +11,14 @@ const SignUp = () => {
     confirmPassword: ''
   })
   const [errors, setErrors] = useState({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const navigate = useNavigate()
+  const { signup, error, clearError } = useAuth()
+
+  // Clear any existing errors when component mounts
+  useEffect(() => {
+    clearError()
+  }, [clearError])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -64,19 +72,24 @@ const SignUp = () => {
     e.preventDefault()
     
     if (validateForm()) {
+      setIsSubmitting(true)
+      setErrors({})
+      
       try {
-        // TODO: Implement actual signup API call
-        console.log('Signup attempt:', formData)
+        // Remove confirmPassword before sending to API
+        const { confirmPassword, ...signupData } = formData
+        const result = await signup(signupData)
         
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        
-        // For now, just navigate to home page
-        navigate('/')
-        alert('Account created successfully!')
+        if (result.success) {
+          navigate('/')
+        } else {
+          setErrors({ general: result.message || 'Signup failed. Please try again.' })
+        }
       } catch (error) {
         console.error('Signup error:', error)
-        setErrors({ general: 'Signup failed. Please try again.' })
+        setErrors({ general: error.message || 'Signup failed. Please try again.' })
+      } finally {
+        setIsSubmitting(false)
       }
     }
   }
@@ -108,7 +121,7 @@ const SignUp = () => {
         </div>
 
         {/* Error Message */}
-        {errors.general && (
+        {(errors.general || error) && (
           <div style={{
             backgroundColor: '#f8d7da',
             color: '#721c24',
@@ -117,7 +130,7 @@ const SignUp = () => {
             marginBottom: '1rem',
             textAlign: 'center'
           }}>
-            {errors.general}
+            {errors.general || error}
           </div>
         )}
 
@@ -286,22 +299,32 @@ const SignUp = () => {
 
           <button
             type="submit"
+            disabled={isSubmitting}
             style={{
               width: '100%',
               padding: '0.75rem',
-              backgroundColor: '#007bff',
+              backgroundColor: isSubmitting ? '#6c757d' : '#007bff',
               color: 'white',
               border: 'none',
               borderRadius: '5px',
               fontSize: '1rem',
               fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'background-color 0.3s ease'
+              cursor: isSubmitting ? 'not-allowed' : 'pointer',
+              transition: 'background-color 0.3s ease',
+              opacity: isSubmitting ? 0.7 : 1
             }}
-            onMouseOver={(e) => e.target.style.backgroundColor = '#0056b3'}
-            onMouseOut={(e) => e.target.style.backgroundColor = '#007bff'}
+            onMouseOver={(e) => {
+              if (!isSubmitting) {
+                e.target.style.backgroundColor = '#0056b3'
+              }
+            }}
+            onMouseOut={(e) => {
+              if (!isSubmitting) {
+                e.target.style.backgroundColor = '#007bff'
+              }
+            }}
           >
-            Create Account
+            {isSubmitting ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
 

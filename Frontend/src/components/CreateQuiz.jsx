@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { quizAPI } from '../services/api'
 
 const CreateQuiz = () => {
   const [quizData, setQuizData] = useState({
@@ -154,17 +155,17 @@ const CreateQuiz = () => {
     }
 
     try {
-      // TODO: Implement actual API call to save quiz
-      console.log('Quiz data to save:', quizData)
+      const response = await quizAPI.createQuiz(quizData)
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      alert('Quiz created successfully!')
-      navigate('/quiz')
+      if (response.success) {
+        alert('Quiz created successfully!')
+        navigate('/quiz')
+      } else {
+        alert(response.message || 'Failed to create quiz. Please try again.')
+      }
     } catch (error) {
       console.error('Error creating quiz:', error)
-      alert('Failed to create quiz. Please try again.')
+      alert(error.message || 'Failed to create quiz. Please try again.')
     }
   }
 

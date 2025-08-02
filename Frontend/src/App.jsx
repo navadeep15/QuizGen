@@ -10,6 +10,7 @@ import Results from './components/Results'
 import About from './components/About'
 import Login from './components/Login'
 import SignUp from './components/SignUp'
+import CreateQuiz from './components/CreateQuiz'
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/create-quiz" element={<CreateQuiz />} />
         </Routes>
       </div>
     </Router>

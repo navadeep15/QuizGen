@@ -22,6 +22,10 @@ const Home = () => {
     navigate('/signup')
   }
 
+  const handleCreateQuiz = () => {
+    navigate('/create-quiz')
+  }
+
   return (
     <div className="page">
       <Navigation />
@@ -120,6 +124,21 @@ const Home = () => {
             }}>
               <h3 style={{ color: '#007bff', marginBottom: '1rem' }}>Create Quizzes</h3>
               <p>Generate custom quizzes with various question types</p>
+              <button 
+                onClick={handleCreateQuiz}
+                style={{
+                  marginTop: '1rem',
+                  padding: '0.5rem 1rem',
+                  backgroundColor: '#007bff',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem'
+                }}
+              >
+                Create Quiz
+              </button>
             </div>
             <div className="feature" style={{
               padding: '2rem',
@@ -130,6 +149,21 @@ const Home = () => {
             }}>
               <h3 style={{ color: '#007bff', marginBottom: '1rem' }}>Take Quizzes</h3>
               <p>Test your knowledge with interactive quizzes</p>
+              <button 
+                onClick={() => navigate('/quiz')}
+                style={{
+                  marginTop: '1rem',
+                  padding: '0.5rem 1rem',
+                  backgroundColor: '#007bff',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem'
+                }}
+              >
+                Take Quiz
+              </button>
             </div>
             <div className="feature" style={{
               padding: '2rem',
@@ -140,6 +174,21 @@ const Home = () => {
             }}>
               <h3 style={{ color: '#007bff', marginBottom: '1rem' }}>View Results</h3>
               <p>Track your progress and performance</p>
+              <button 
+                onClick={() => navigate('/results')}
+                style={{
+                  marginTop: '1rem',
+                  padding: '0.5rem 1rem',
+                  backgroundColor: '#007bff',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem'
+                }}
+              >
+                View Results
+              </button>
             </div>
           </div>
 
@@ -153,24 +202,44 @@ const Home = () => {
           }}>
             <h3 style={{ color: '#1976d2', marginBottom: '1rem' }}>Ready to Get Started?</h3>
             <p style={{ marginBottom: '1.5rem' }}>Join thousands of users creating and taking quizzes!</p>
-            <button 
-              onClick={handleSignUp}
-              style={{
-                padding: '0.75rem 2rem',
-                backgroundColor: '#1976d2',
-                color: 'white',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                fontSize: '1.1rem',
-                fontWeight: '500',
-                transition: 'background-color 0.3s ease'
-              }}
-              onMouseOver={(e) => e.target.style.backgroundColor = '#1565c0'}
-              onMouseOut={(e) => e.target.style.backgroundColor = '#1976d2'}
-            >
-              Get Started Now
-            </button>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button 
+                onClick={handleCreateQuiz}
+                style={{
+                  padding: '0.75rem 2rem',
+                  backgroundColor: '#1976d2',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  fontSize: '1.1rem',
+                  fontWeight: '500',
+                  transition: 'background-color 0.3s ease'
+                }}
+                onMouseOver={(e) => e.target.style.backgroundColor = '#1565c0'}
+                onMouseOut={(e) => e.target.style.backgroundColor = '#1976d2'}
+              >
+                Create Quiz
+              </button>
+              <button 
+                onClick={handleSignUp}
+                style={{
+                  padding: '0.75rem 2rem',
+                  backgroundColor: '#28a745',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  fontSize: '1.1rem',
+                  fontWeight: '500',
+                  transition: 'background-color 0.3s ease'
+                }}
+                onMouseOver={(e) => e.target.style.backgroundColor = '#218838'}
+                onMouseOut={(e) => e.target.style.backgroundColor = '#28a745'}
+              >
+                Sign Up
+              </button>
+            </div>
           </div>
         </div>
       </div>

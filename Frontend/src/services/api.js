@@ -32,7 +32,8 @@ const apiRequest = async (endpoint, options = {}) => {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+    const response = await fetch(`${API_BASE_URL.replace(/\/+$/, '')}/${endpoint.replace(/^\/+/, '')}`, config);
+    ;
     
     // Handle 401 Unauthorized
     if (response.status === 401) {

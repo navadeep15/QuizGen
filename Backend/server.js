@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5000;
 // CORS configuration for Render deployment
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
-    ? [process.env.FRONTEND_URL, 'https://quizgen-frontend.onrender.com']
+    ? [process.env.FRONTEND_URL, 'https://quiz-gen-rho.vercel.app/']
     : ['http://localhost:5173', 'http://localhost:3000'],
   credentials: true,
   optionsSuccessStatus: 200

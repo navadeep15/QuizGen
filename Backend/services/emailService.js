@@ -143,7 +143,7 @@ const sendAssignmentNotificationToAdmin = async (adminEmail, adminName, quizTitl
             <div style="background-color: #e3f2fd; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <h4 style="color: #1976d2; margin: 0 0 10px 0;">Assigned Users:</h4>
               <ul style="color: #666; margin: 0; padding-left: 20px;">
-                ${assignedUsers.map(user => `<li>${user.email}</li>`).join('')}
+                                 ${assignedUsers.map(user => `<li>${user.email}</li>`).join('')}
               </ul>
             </div>
             <div style="text-align: center; margin: 30px 0;">

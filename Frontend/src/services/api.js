@@ -1,6 +1,15 @@
-const API_BASE_URL = import.meta.env.DEV
-  ? 'http://localhost:5000/api'
-  : (import.meta.env.VITE_API_URL || 'https://quizgen-4okk.onrender.com/api');
+// Helper function to build API URL
+const buildApiUrl = () => {
+  if (import.meta.env.DEV) {
+    return 'http://localhost:5000/api';
+  }
+  
+  const baseUrl = import.meta.env.VITE_API_URL || 'https://quizgen-4okk.onrender.com';
+  // Ensure the URL ends with /api
+  return baseUrl.endsWith('/api') ? baseUrl : `${baseUrl}/api`;
+};
+
+const API_BASE_URL = buildApiUrl();
 
 // Helper function to get auth token
 const getAuthToken = () => {

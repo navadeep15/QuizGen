@@ -44,8 +44,6 @@ const Login = () => {
     
     if (!formData.password) {
       newErrors.password = 'Password is required'
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters'
     }
 
     setErrors(newErrors)
@@ -67,11 +65,26 @@ const Login = () => {
           const from = location.state?.from?.pathname || '/'
           navigate(from, { replace: true })
         } else {
-          setErrors({ general: result.message || 'Login failed. Please try again.' })
+          // Show specific error message from backend
+          setErrors({ general: result.message })
         }
       } catch (error) {
         console.error('Login error:', error)
-        setErrors({ general: error.message || 'Login failed. Please try again.' })
+        
+        // Handle specific error types
+        let errorMessage = 'Login failed. Please try again.'
+        
+        if (error.message.includes('Invalid email or password')) {
+          errorMessage = 'Invalid email or password. Please check your credentials.'
+        } else if (error.message.includes('Failed to fetch')) {
+          errorMessage = 'Unable to connect to server. Please check your internet connection.'
+        } else if (error.message.includes('NetworkError')) {
+          errorMessage = 'Network error. Please check your connection and try again.'
+        } else if (error.message) {
+          errorMessage = error.message
+        }
+        
+        setErrors({ general: errorMessage })
       } finally {
         setIsSubmitting(false)
       }

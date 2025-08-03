@@ -54,14 +54,18 @@ const apiRequest = async (endpoint, options = {}) => {
     // Handle 401 Unauthorized
     if (response.status === 401) {
       setAuthToken(null);
-      window.location.href = '/login';
-      throw new Error('Authentication failed');
+      throw new Error('Invalid email or password');
     }
 
     const data = await response.json();
     
     if (!response.ok) {
-      throw new Error(data.message || 'API request failed');
+      // Return the error response instead of throwing
+      return {
+        success: false,
+        message: data.message || `Request failed with status ${response.status}`,
+        status: response.status
+      };
     }
 
     return data;

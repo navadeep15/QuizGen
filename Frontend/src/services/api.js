@@ -1,4 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.DEV
+  ? 'http://localhost:5000/api'
+  : import.meta.env.VITE_API_URL;
 
 // Helper function to get auth token
 const getAuthToken = () => {
@@ -33,7 +35,8 @@ const apiRequest = async (endpoint, options = {}) => {
 
   try {
     const response = await fetch(`${API_BASE_URL.replace(/\/+$/, '')}/${endpoint.replace(/^\/+/, '')}`, config);
-    ;
+
+    
     
     // Handle 401 Unauthorized
     if (response.status === 401) {

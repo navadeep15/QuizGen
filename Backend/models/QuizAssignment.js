@@ -34,6 +34,10 @@ const quizAssignmentSchema = new mongoose.Schema({
   totalQuestions: {
     type: Number
   },
+  timeTaken: {
+    type: Number, // Time taken in seconds
+    default: 0
+  },
   expiresAt: {
     type: Date
   }

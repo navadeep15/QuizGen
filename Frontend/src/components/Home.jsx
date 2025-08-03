@@ -8,6 +8,7 @@ const Navigation = () => {
   const { user, logout } = useAuth()
   
   return (
+
     <nav className="navigation">
       <div className="nav-links">
         <Link to="/" className="nav-link">Home</Link>
@@ -22,6 +23,7 @@ const Navigation = () => {
           </>
         )}
       </div>
+
     </nav>
   )
 }
@@ -130,8 +132,11 @@ const Home = () => {
                 Test your knowledge with interactive quizzes featuring instant feedback and detailed explanations.
               </p>
               <button 
+
                 onClick={() => navigate('/quiz')}
                 className="feature-btn"
+
+                
               >
                 Take Quiz
               </button>

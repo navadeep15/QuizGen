@@ -1,6 +1,6 @@
 const API_BASE_URL = import.meta.env.DEV
   ? 'http://localhost:5000/api'
-  : import.meta.env.VITE_API_URL;
+  : (import.meta.env.VITE_API_URL || 'https://quizgen-4okk.onrender.com/api');
 
 // Helper function to get auth token
 const getAuthToken = () => {
@@ -34,9 +34,13 @@ const apiRequest = async (endpoint, options = {}) => {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL.replace(/\/+$/, '')}/${endpoint.replace(/^\/+/, '')}`, config);
-
-    console.log(response);
+    const url = `${API_BASE_URL.replace(/\/+$/, '')}/${endpoint.replace(/^\/+/, '')}`;
+    console.log('Making API request to:', url);
+    
+    const response = await fetch(url, config);
+    
+    console.log('Response status:', response.status);
+    console.log('Response headers:', response.headers);
     
     // Handle 401 Unauthorized
     if (response.status === 401) {
@@ -54,6 +58,8 @@ const apiRequest = async (endpoint, options = {}) => {
     return data;
   } catch (error) {
     console.error('API Error:', error);
+    console.error('API Base URL:', API_BASE_URL);
+    console.error('Environment:', import.meta.env.MODE);
     throw error;
   }
 };

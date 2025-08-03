@@ -6,10 +6,15 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS configuration for Render deployment
+// CORS configuration for deployment
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
-    ? [process.env.FRONTEND_URL, 'https://quiz-gen-rho.vercel.app/']
+    ? [
+        process.env.FRONTEND_URL,
+        'https://quiz-gen-rho.vercel.app',
+        'https://quizgen-frontend.onrender.com',
+        'https://quizgen.vercel.app'
+      ].filter(Boolean)
     : ['http://localhost:5173', 'http://localhost:3000'],
   credentials: true,
   optionsSuccessStatus: 200

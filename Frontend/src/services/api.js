@@ -181,6 +181,14 @@ export const quizAPI = {
       body: JSON.stringify(answers),
     });
   },
+
+  // Assign quiz to users
+  assignQuiz: async (quizId, assignmentData) => {
+    return await apiRequest(`/quiz/${quizId}/assign`, {
+      method: 'POST',
+      body: JSON.stringify(assignmentData),
+    });
+  },
 };
 
 // User API

@@ -8,6 +8,8 @@ import About from './components/About'
 import Login from './components/Login'
 import SignUp from './components/SignUp'
 import CreateQuiz from './components/CreateQuiz'
+import Dashboard from './components/Dashboard'
+import AssignQuiz from './components/AssignQuiz'
 import ProtectedRoute from './components/ProtectedRoute'
 import { AuthProvider } from './context/AuthContext'
 
@@ -26,6 +28,16 @@ function App() {
             <Route path="/create-quiz" element={
               <ProtectedRoute>
                 <CreateQuiz />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/assign-quiz" element={
+              <ProtectedRoute>
+                <AssignQuiz />
               </ProtectedRoute>
             } />
           </Routes>

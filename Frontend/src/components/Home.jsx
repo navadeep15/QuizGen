@@ -13,7 +13,11 @@ const Navigation = () => {
       <Link to="/results" style={{ marginRight: '1rem', textDecoration: 'none', color: '#333' }}>Results</Link>
       <Link to="/about" style={{ marginRight: '1rem', textDecoration: 'none', color: '#333' }}>About</Link>
       {user && (
-        <Link to="/create-quiz" style={{ marginRight: '1rem', textDecoration: 'none', color: '#333' }}>Create Quiz</Link>
+        <>
+          <Link to="/dashboard" style={{ marginRight: '1rem', textDecoration: 'none', color: '#333' }}>Dashboard</Link>
+          <Link to="/create-quiz" style={{ marginRight: '1rem', textDecoration: 'none', color: '#333' }}>Create Quiz</Link>
+          <Link to="/assign-quiz" style={{ marginRight: '1rem', textDecoration: 'none', color: '#333' }}>Assign Quiz</Link>
+        </>
       )}
     </nav>
   )

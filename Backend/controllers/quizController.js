@@ -1,5 +1,8 @@
 const Quiz = require('../models/Quiz');
 const User = require('../models/User');
+const QuizAssignment = require('../models/QuizAssignment');
+const { sendQuizAssignmentEmail, sendAssignmentNotificationToAdmin, sendQuizCompletionEmail } = require('../services/emailService');
+const mongoose = require('mongoose');
 
 // Create new quiz
 exports.createQuiz = async (req, res) => {
@@ -198,6 +201,48 @@ exports.submitQuiz = async (req, res) => {
       }
     });
 
+    // Update quiz assignment status if it exists
+    const assignment = await QuizAssignment.findOne({
+      quiz: quizId,
+      assignedTo: req.userId
+    });
+
+    if (assignment) {
+      assignment.status = 'completed';
+      assignment.completedAt = new Date();
+      assignment.score = score;
+      assignment.totalQuestions = totalQuestions;
+      await assignment.save();
+
+      // Send completion email to user and admin
+      try {
+        const user = await User.findById(req.userId);
+        const adminUser = await User.findById(assignment.assignedBy);
+
+        // Send email to user
+        await sendQuizCompletionEmail(
+          user.email,
+          `${user.firstName} ${user.lastName}`,
+          quiz.title,
+          score,
+          totalQuestions,
+          `${adminUser.firstName} ${adminUser.lastName}`
+        );
+
+        // Send notification to admin
+        await sendQuizCompletionEmail(
+          adminUser.email,
+          `${adminUser.firstName} ${adminUser.lastName}`,
+          quiz.title,
+          score,
+          totalQuestions,
+          `${user.firstName} ${user.lastName}`
+        );
+      } catch (emailError) {
+        console.error('Failed to send completion emails:', emailError);
+      }
+    }
+
     res.json({
       success: true,
       message: 'Quiz submitted successfully',
@@ -334,6 +379,131 @@ exports.deleteQuiz = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error deleting quiz',
+      error: error.message
+    });
+  }
+};
+
+// Assign quiz to users
+exports.assignQuiz = async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    const { emails } = req.body;
+
+    if (!emails || !Array.isArray(emails) || emails.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide at least one email address'
+      });
+    }
+
+    // Validate quiz exists and user owns it
+    const quiz = await Quiz.findById(quizId);
+    if (!quiz) {
+      return res.status(404).json({
+        success: false,
+        message: 'Quiz not found'
+      });
+    }
+
+    if (quiz.creator.toString() !== req.userId) {
+      return res.status(403).json({
+        success: false,
+        message: 'You can only assign your own quizzes'
+      });
+    }
+
+    // Find users by email addresses
+    const users = await User.find({ email: { $in: emails } });
+    const foundEmails = users.map(user => user.email);
+    const notFoundEmails = emails.filter(email => !foundEmails.includes(email));
+
+    if (notFoundEmails.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Users not found: ${notFoundEmails.join(', ')}`,
+        notFoundEmails
+      });
+    }
+
+    // Get admin user info for email
+    const adminUser = await User.findById(req.userId);
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+    // Create quiz assignments and send emails
+    const assignments = [];
+    const emailResults = [];
+    
+    for (const user of users) {
+      // Check if assignment already exists
+      const existingAssignment = await QuizAssignment.findOne({
+        quiz: quizId,
+        assignedTo: user._id
+      });
+
+      if (!existingAssignment) {
+        const assignment = new QuizAssignment({
+          quiz: quizId,
+          assignedBy: req.userId,
+          assignedTo: user._id,
+          assignedAt: new Date(),
+          status: 'pending'
+        });
+        await assignment.save();
+        assignments.push(assignment);
+
+        // Send email to user
+        try {
+          const emailResult = await sendQuizAssignmentEmail(
+            user.email,
+            `${user.firstName} ${user.lastName}`,
+            quiz.title,
+            `${adminUser.firstName} ${adminUser.lastName}`,
+            frontendUrl
+          );
+          emailResults.push({
+            user: user.email,
+            success: emailResult.success,
+            error: emailResult.error
+          });
+        } catch (emailError) {
+          console.error(`Failed to send email to ${user.email}:`, emailError);
+          emailResults.push({
+            user: user.email,
+            success: false,
+            error: emailError.message
+          });
+        }
+      }
+    }
+
+    // Send summary email to admin
+    try {
+      await sendAssignmentNotificationToAdmin(
+        adminUser.email,
+        `${adminUser.firstName} ${adminUser.lastName}`,
+        quiz.title,
+        users
+      );
+    } catch (adminEmailError) {
+      console.error('Failed to send admin notification:', adminEmailError);
+    }
+
+    res.json({
+      success: true,
+      message: `Quiz assigned successfully to ${assignments.length} user(s)`,
+      data: {
+        assignedCount: assignments.length,
+        totalEmails: emails.length,
+        notFoundEmails,
+        emailResults
+      }
+    });
+  } catch (error) {
+    console.error('Assign quiz error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error assigning quiz',
       error: error.message
     });
   }

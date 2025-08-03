@@ -60,15 +60,12 @@ exports.getUserStats = async (req, res) => {
     res.json({
       success: true,
       data: {
-        user: user.getProfile(),
-        stats: {
-          totalQuizzesCreated,
-          totalQuizzesTaken,
-          averageScore,
-          totalScore,
-          categoryStats,
-          recentAttempts
-        }
+        quizzesCreated: totalQuizzesCreated,
+        quizzesTaken: totalQuizzesTaken,
+        averageScore,
+        totalQuestions: user.quizzesTaken.reduce((sum, attempt) => sum + attempt.totalQuestions, 0),
+        categoryStats,
+        recentAttempts
       }
     });
   } catch (error) {
@@ -108,12 +105,7 @@ exports.getQuizHistory = async (req, res) => {
 
     res.json({
       success: true,
-      data: {
-        history: paginatedHistory,
-        totalPages: Math.ceil(total / limit),
-        currentPage: parseInt(page),
-        total
-      }
+      data: paginatedHistory
     });
   } catch (error) {
     console.error('Get quiz history error:', error);
@@ -152,12 +144,7 @@ exports.getCreatedQuizzes = async (req, res) => {
 
     res.json({
       success: true,
-      data: {
-        quizzes: paginatedQuizzes,
-        totalPages: Math.ceil(total / limit),
-        currentPage: parseInt(page),
-        total
-      }
+      data: paginatedQuizzes
     });
   } catch (error) {
     console.error('Get created quizzes error:', error);

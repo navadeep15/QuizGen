@@ -13,5 +13,6 @@ router.get('/user/created', authenticateToken, quizController.getUserQuizzes);
 router.put('/:quizId', authenticateToken, quizController.updateQuiz);
 router.delete('/:quizId', authenticateToken, quizController.deleteQuiz);
 router.post('/:quizId/submit', authenticateToken, quizController.submitQuiz);
+router.post('/:quizId/assign', authenticateToken, quizController.assignQuiz);
 
 module.exports = router; 

@@ -9,7 +9,6 @@ const Navigation = () => {
   return (
     <nav style={{ padding: '1rem', backgroundColor: '#f0f0f0', marginBottom: '1rem' }}>
       <Link to="/" style={{ marginRight: '1rem', textDecoration: 'none', color: '#333' }}>Home</Link>
-      <Link to="/quiz" style={{ marginRight: '1rem', textDecoration: 'none', color: '#333' }}>Quiz</Link>
       <Link to="/results" style={{ marginRight: '1rem', textDecoration: 'none', color: '#333' }}>Results</Link>
       <Link to="/about" style={{ marginRight: '1rem', textDecoration: 'none', color: '#333' }}>About</Link>
       {user && (
@@ -202,7 +201,7 @@ const Home = () => {
               <h3 style={{ color: '#007bff', marginBottom: '1rem' }}>Take Quizzes</h3>
               <p>Test your knowledge with interactive quizzes</p>
               <button 
-                onClick={() => navigate('/quiz')}
+                onClick={() => navigate('/assigned-quizzes')}
                 style={{
                   marginTop: '1rem',
                   padding: '0.5rem 1rem',

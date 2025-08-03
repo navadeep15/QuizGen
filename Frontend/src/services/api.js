@@ -146,6 +146,11 @@ export const quizAPI = {
     return await apiRequest(`/quiz/${quizId}`);
   },
 
+  // Get assigned quiz for taking (with validation)
+  getAssignedQuiz: async (quizId) => {
+    return await apiRequest(`/quiz/assigned/${quizId}`);
+  },
+
   // Create new quiz
   createQuiz: async (quizData) => {
     return await apiRequest('/quiz', {
@@ -157,6 +162,11 @@ export const quizAPI = {
   // Get user's created quizzes
   getUserQuizzes: async () => {
     return await apiRequest('/quiz/user/created');
+  },
+
+  // Get user's assigned quizzes
+  getAssignedQuizzes: async () => {
+    return await apiRequest('/quiz/assigned');
   },
 
   // Update quiz
@@ -188,6 +198,11 @@ export const quizAPI = {
       method: 'POST',
       body: JSON.stringify(assignmentData),
     });
+  },
+
+  // Get assignment results
+  getAssignmentResults: async () => {
+    return await apiRequest('/quiz/assignments/results');
   },
 };
 

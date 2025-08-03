@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 // Import component files
 import Home from './components/Home'
-import Quiz from './components/Quiz'
 import Results from './components/Results'
 import About from './components/About'
 import Login from './components/Login'
@@ -10,6 +9,8 @@ import SignUp from './components/SignUp'
 import CreateQuiz from './components/CreateQuiz'
 import Dashboard from './components/Dashboard'
 import AssignQuiz from './components/AssignQuiz'
+import AssignedQuizzes from './components/AssignedQuizzes'
+import TakeAssignedQuiz from './components/TakeAssignedQuiz'
 import ProtectedRoute from './components/ProtectedRoute'
 import { AuthProvider } from './context/AuthContext'
 
@@ -20,7 +21,6 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/quiz" element={<Quiz />} />
             <Route path="/results" element={<Results />} />
             <Route path="/about" element={<About />} />
             <Route path="/login" element={<Login />} />
@@ -38,6 +38,16 @@ function App() {
             <Route path="/assign-quiz" element={
               <ProtectedRoute>
                 <AssignQuiz />
+              </ProtectedRoute>
+            } />
+            <Route path="/assigned-quizzes" element={
+              <ProtectedRoute>
+                <AssignedQuizzes />
+              </ProtectedRoute>
+            } />
+            <Route path="/take-quiz/:quizId" element={
+              <ProtectedRoute>
+                <TakeAssignedQuiz />
               </ProtectedRoute>
             } />
           </Routes>

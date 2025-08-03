@@ -148,8 +148,9 @@ exports.getQuizForTaking = async (req, res) => {
 exports.submitQuiz = async (req, res) => {
   try {
     const { quizId } = req.params;
-    const { answers } = req.body;
+    const { answers, timeTaken } = req.body;
 
+    // Fetch the full quiz with correct answers for scoring
     const quiz = await Quiz.findById(quizId);
     if (!quiz) {
       return res.status(404).json({
@@ -158,10 +159,21 @@ exports.submitQuiz = async (req, res) => {
       });
     }
 
-    if (!quiz.isPublic && quiz.creator.toString() !== req.userId) {
+    // Check if user has access to this quiz (either public, creator, or assigned)
+    const assignment = await QuizAssignment.findOne({
+      quiz: quizId,
+      assignedTo: req.userId,
+      status: 'pending'
+    });
+
+    const hasAccess = quiz.isPublic || 
+                     quiz.creator.toString() === req.userId || 
+                     assignment;
+
+    if (!hasAccess) {
       return res.status(403).json({
         success: false,
-        message: 'Access denied'
+        message: 'Access denied - You are not assigned to this quiz'
       });
     }
 
@@ -170,12 +182,42 @@ exports.submitQuiz = async (req, res) => {
     const totalQuestions = quiz.questions.length;
     const processedAnswers = [];
 
+    console.log('Quiz data for submission:', {
+      quizId,
+      totalQuestions,
+      questionsCount: quiz.questions.length,
+      firstQuestion: quiz.questions[0] ? {
+        question: quiz.questions[0].question,
+        optionsCount: quiz.questions[0].options.length,
+        firstOption: quiz.questions[0].options[0]
+      } : 'No questions'
+    });
+
     for (let i = 0; i < totalQuestions; i++) {
       const question = quiz.questions[i];
       const userAnswer = answers[i];
       
+      console.log(`Processing question ${i}:`, {
+        questionText: question.question,
+        userAnswer,
+        optionsCount: question.options.length,
+        options: question.options.map((opt, idx) => ({
+          index: idx,
+          text: opt.text,
+          isCorrect: opt.isCorrect
+        }))
+      });
+      
       if (userAnswer !== undefined && userAnswer >= 0 && userAnswer < question.options.length) {
-        const isCorrect = question.options[userAnswer].isCorrect;
+        const selectedOption = question.options[userAnswer];
+        const isCorrect = selectedOption && selectedOption.isCorrect;
+        
+        console.log(`Question ${i} result:`, {
+          userAnswer,
+          selectedOption,
+          isCorrect
+        });
+        
         if (isCorrect) score++;
         
         processedAnswers.push({
@@ -202,16 +244,12 @@ exports.submitQuiz = async (req, res) => {
     });
 
     // Update quiz assignment status if it exists
-    const assignment = await QuizAssignment.findOne({
-      quiz: quizId,
-      assignedTo: req.userId
-    });
-
     if (assignment) {
       assignment.status = 'completed';
       assignment.completedAt = new Date();
       assignment.score = score;
       assignment.totalQuestions = totalQuestions;
+      assignment.timeTaken = timeTaken || 0;
       await assignment.save();
 
       // Send completion email to user and admin
@@ -250,6 +288,7 @@ exports.submitQuiz = async (req, res) => {
         score,
         totalQuestions,
         percentage: Math.round((score / totalQuestions) * 100),
+        timeTaken: timeTaken || 0,
         answers: processedAnswers
       }
     });
@@ -504,6 +543,124 @@ exports.assignQuiz = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error assigning quiz',
+      error: error.message
+    });
+  }
+};
+
+// Get user's assigned quizzes
+exports.getAssignedQuizzes = async (req, res) => {
+  try {
+    const assignments = await QuizAssignment.find({ assignedTo: req.userId })
+      .populate('quiz', 'title description timeLimit')
+      .populate('assignedBy', 'firstName lastName')
+      .sort({ assignedAt: -1 });
+
+    res.json({
+      success: true,
+      data: {
+        assignments
+      }
+    });
+  } catch (error) {
+    console.error('Get assigned quizzes error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching assigned quizzes',
+      error: error.message
+    });
+  }
+};
+
+// Get assignment results
+exports.getAssignmentResults = async (req, res) => {
+  try {
+    const assignments = await QuizAssignment.find({ 
+      assignedTo: req.userId,
+      status: 'completed'
+    })
+      .populate('quiz', 'title description')
+      .populate('assignedBy', 'firstName lastName')
+      .sort({ completedAt: -1 });
+
+    const results = assignments.map(assignment => ({
+      _id: assignment._id,
+      quiz: assignment.quiz,
+      assignedBy: assignment.assignedBy,
+      score: assignment.score,
+      totalQuestions: assignment.totalQuestions,
+      timeTaken: assignment.timeTaken,
+      completedAt: assignment.completedAt,
+      assignedAt: assignment.assignedAt
+    }));
+
+    res.json({
+      success: true,
+      data: results
+    });
+  } catch (error) {
+    console.error('Get assignment results error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching assignment results',
+      error: error.message
+    });
+  }
+}; 
+
+// Get assigned quiz by ID (for taking)
+exports.getAssignedQuizForTaking = async (req, res) => {
+  try {
+    const { quizId } = req.params;
+
+    // First check if this quiz is assigned to the user
+    const assignment = await QuizAssignment.findOne({
+      quiz: quizId,
+      assignedTo: req.userId,
+      status: 'pending'
+    }).populate('quiz');
+
+    if (!assignment) {
+      return res.status(404).json({
+        success: false,
+        message: 'Quiz assignment not found or already completed'
+      });
+    }
+
+    // Check if quiz has expired
+    if (assignment.expiresAt && new Date() > assignment.expiresAt) {
+      return res.status(400).json({
+        success: false,
+        message: 'This quiz has expired'
+      });
+    }
+
+    // Get the quiz without correct answers
+    const quiz = await Quiz.getQuizForTaking(quizId);
+    
+    if (!quiz) {
+      return res.status(404).json({
+        success: false,
+        message: 'Quiz not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        quiz,
+        assignment: {
+          _id: assignment._id,
+          expiresAt: assignment.expiresAt,
+          assignedAt: assignment.assignedAt
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Get assigned quiz error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching assigned quiz',
       error: error.message
     });
   }

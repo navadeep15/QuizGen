@@ -159,7 +159,7 @@ const CreateQuiz = () => {
       
       if (response.success) {
         alert('Quiz created successfully!')
-        navigate('/quiz')
+        navigate('/dashboard')
       } else {
         alert(response.message || 'Failed to create quiz. Please try again.')
       }

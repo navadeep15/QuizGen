@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { userAPI, quizAPI } from '../services/api'
 
 const Dashboard = () => {
-  const { user } = useAuth()
+  const { user,logout } = useAuth()
   const [stats, setStats] = useState(null)
   const [assignedQuizzes, setAssignedQuizzes] = useState([])
   const [recentResults, setRecentResults] = useState([])
@@ -44,6 +44,11 @@ const Dashboard = () => {
 
     fetchDashboardData()
   }, [])
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -136,6 +141,12 @@ const Dashboard = () => {
           <span style={{ color: '#666' }}>
             Welcome, {user?.firstName} {user?.lastName}
           </span>
+          <button 
+                  onClick={handleLogout}
+                  className="btn btn-danger"
+                >
+                  Logout
+                </button>
         </div>
       </header>
 

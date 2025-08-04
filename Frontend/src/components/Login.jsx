@@ -55,7 +55,10 @@ const Login = () => {
       <div className="signup-right" style={{backgroundImage: 'url(/signup.jpg)', backgroundSize: 'cover', backgroundPosition: 'center'}}>
       </div>
       <div className="login-left">
+      <Link to="/" style={{ textDecoration: 'none' }}>
+
         <h1 className="brand">QuizGen</h1>
+        </Link>
         <h2>Welcome Back</h2>
 
         {errors.general || error ? (

@@ -69,7 +69,10 @@ const SignUp = () => {
   return (
     <div className="signup-wrapper">
       <div className="signup-left">
+      <Link to="/" style={{ textDecoration: 'none' }}>
+
         <h1 className="brand">QuizGen</h1>
+        </Link>
         <h2>Create your Account</h2>
 
         {/* <div className="social-login">

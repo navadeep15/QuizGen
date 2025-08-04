@@ -64,6 +64,14 @@ const Home = () => {
                 <span className="welcome-text" style={{marginTop: '10px'}}>
                   Welcome, {user.firstName}!
                 </span>
+
+                <button 
+                  onClick={() => navigate('/dashboard')}
+                  className="btn"
+                >
+                  Dashboard
+                </button>
+
                 <button 
                   onClick={handleLogout}
                   className="btn btn-danger"

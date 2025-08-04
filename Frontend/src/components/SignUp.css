@@ -1,0 +1,155 @@
+.signup-wrapper {
+    display: flex;
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .signup-left, .signup-right {
+    flex: 1;
+    padding: 3rem;
+    box-sizing: border-box;
+  }
+  
+  .signup-left {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .signup-right {
+    background: red;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .brand {
+    color: red;
+    margin-bottom: 1.5rem;
+  }
+  
+  .social-login {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .google-btn, .facebook-btn {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    background: #fff;
+    cursor: pointer;
+  }
+  
+  .divider {
+    text-align: center;
+    margin: 2rem 0;
+    position: relative;
+  }
+  
+  .divider span {
+    background: #fff;
+    padding: 0 1rem;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: #ccc;
+    z-index: 0;
+  }
+  
+  .form input {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .input-row {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .error {
+    border-color: #dc3545;
+  }
+  
+  .field-error {
+    color: #dc3545;
+    margin: -0.75rem 0 0.75rem;
+    font-size: 0.875rem;
+  }
+  
+  .submit-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+  
+  .login-link {
+    text-align: center;
+    margin-top: 1rem;
+  }
+  
+  .error-box {
+    background: #f8d7da;
+    padding: 0.75rem;
+    color: #721c24;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+  }
+  
+  .illustration {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .app-icons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .mockup {
+    background: white;
+    width: 250px;
+    padding: 1rem;
+    border-radius: 10px;
+  }
+  
+  .mockup .tab {
+    height: 10px;
+    background: #ccc;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+  }
+  
+  .mockup .line {
+    height: 15px;
+    background: #eee;
+    margin: 0.5rem 0;
+    border-radius: 5px;
+  }
+  
+  .caption {
+    margin-top: 2rem;
+    text-align: center;
+  }
+  

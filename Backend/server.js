@@ -26,7 +26,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Database connection with Render MongoDB Atlas
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/quizgen';
+const MONGODB_URI = process.env.NODE_ENV === 'production'
+  ? process.env.MONGODB_URI_PROD
+  : process.env.MONGODB_URI_DEV || 'mongodb://localhost:27017/quizgen';
+
 
 mongoose.connect(MONGODB_URI, {
   serverSelectionTimeoutMS: 5000,

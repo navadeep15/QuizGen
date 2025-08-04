@@ -51,7 +51,6 @@ const Home = () => {
 
   return (
     <div className="home-page">
-      <Navigation />
       
       {/* Header with Auth Buttons */}
       <div className="header-section">
@@ -133,7 +132,7 @@ const Home = () => {
               </p>
               <button 
 
-                onClick={() => navigate('/quiz')}
+                onClick={() => navigate('assigned-quizzes')}
                 className="feature-btn"
 
                 

@@ -61,7 +61,7 @@ const Home = () => {
           <div className="auth-section">
             {user ? (
               <>
-                <span className="welcome-text">
+                <span className="welcome-text" style={{marginTop: '10px'}}>
                   Welcome, {user.firstName}!
                 </span>
                 <button 
@@ -94,7 +94,7 @@ const Home = () => {
       {/* Main Content */}
       <div className="main-content">
         {/* Hero Section */}
-        <div className="hero-section fade-in">
+        <div className="hero-section">
           <h1 className="hero-title">Welcome to QuizGen!</h1>
           <p className="hero-subtitle">
             Create, take, and analyze quizzes with our powerful platform. 
